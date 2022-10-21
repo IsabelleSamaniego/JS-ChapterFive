@@ -30,25 +30,118 @@ function createLightbox() {
     insertBefore() method. */
 
     // Design the lightbox title
-    lightBox.appendChild(lbTitle);
+    lightBox.appendChild(lbTitle); // Define the id for the lbTitle node
     lbTitle.id = "lbTitle";
+    lbTitle.textContent = lightboxTitle; // Add the lightbox title
+
 
     // Design the lightbox slide counter
     lightBox.appendChild(lbCounter);
     lbCounter.id = "lbCounter";
+    let currentImg = 1; // Set initial value
+    lbCounter.textContent = currentImg + " / " + imgCount; // currentImg displays current image and count of all images
+
+
     // Design the lightbox previous slide button
     lightBox.appendChild(lbPrev);
     lbPrev.id = "lbPrev";
+    lbPrev.innerHTML = "&#9664;";
+    lbPrev.onclick = showPrev; // add event handler
+
+
     // Design the lightbox next slide button
     lightBox.appendChild(lbNext);
     lbNext.id = "lbNext";
+    lbNext.innerHTML = "&#9654;";
+    lbNext.onclick = showNext; // add event handler
+
+
     // Design the lightbox Play-Pause button
     lightBox.appendChild(lbPlay);
     lbPlay.id = "lbPlay";
+    lbPlay.innerHTML = "&#9199;";
+        let timeID; // initialize timeID
+        lbPlay.onclick = function() {
+            // showNext();
+            // timeID = window.setInterval(showNext, 1500);
+            if (timeID) {
+                
+                // Stop the slideshow
+                window.clearInterval(timeID);
+                timeID = undefined;
+                } else {
+                
+                    // Start the slideshow
+                showNext();
+                timeID = window.setInterval(showNext, 1500);
+            }
+        }
+
+
     // Design the lightbox images container
     lightBox.appendChild(lbImages);
     lbImages.id = "lbImages";
+
+
+    // Add images from the imgFiles array to the container
+    for (let i = 0; i < imgCount; i++) {
+        let image = document.createElement("img");
+
+        image.src = imgFiles[i];
+        image.alt = imgCaptions[i];
+        image.onclick = createOverlay; // call the createOverlay() when any image is clicked
+        lbImages.appendChild(image);
+    }
+
+
+    // Function to move forward through the image list
+    function showNext() {
+        lbImages.appendChild(lbImages.firstElementChild); // firstElementChild moves the first image to the end of the list
+        (currentImg < imgCount) ? currentImg++ : currentImg = 1; // 1 increases the image count until the last is reached
+        lbCounter.textContent = currentImg + " / " + imgCount; //updates the text in the image counter box
+    }
+
+    // Function to move backward through the image list
+    function showPrev() {
+        lbImages.insertBefore(lbImages.lastElementChild, // moves the last image to the start of the list
+        lbImages.firstElementChild);
+        (currentImg > 1) ? currentImg-- : currentImg = imgCount; // decreases the image count by 1 until the first image is reached
+        lbCounter.textContent = currentImg + " / " + imgCount; // updates the text in the image counter box
+    }
+
+    function createOverlay() {
+        let overlay = document.createElement("div");
+        overlay.id = "lbOverlay";
+
+        // Add the figure box to the overlay
+        let figureBox = document.createElement("figure");
+        overlay.appendChild(figureBox);
+
+        // Add the image to the figure box
+        let overlayImage = this.cloneNode("true"); // copy the image that called the function
+        figureBox.appendChild(overlayImage); // append the copied image to the figure box
+
+        // Add the caption to the figure box
+        let overlayCaption = document.createElement("figcaption");
+        overlayCaption.textContent = this.alt; // display the value of the alt attribute as the fig caption
+        figureBox.appendChild(overlayCaption); // append the caption to the figure box
+
+        // Add a close button to the overlay
+        let closeBox = document.createElement("div"); // create an element for the close button
+        closeBox.id = "lbOverlayClose";
+        closeBox.innerHTML = "&times;"; // displays the X symbol in the close button
+
+        closeBox.onclick = function() { // when the close button is clicked, it removes the overlay from the doc body
+            document.body.removeChild(overlay);
+        }
+
+        overlay.appendChild(closeBox);
+
+        document.body.appendChild(overlay); // append the close button to the overlay
+    }
+
 }
+
 
 
 
