@@ -27,10 +27,7 @@ let timeLeft = quizTime;
 // Declare the ID for timed commands
 // and the node list for questions
 
-
-
-
-
+/*------------------ Hands-on Instructions ---------------------*/
 
 // No. 3 Declare timeID with no value
 let timeID;
